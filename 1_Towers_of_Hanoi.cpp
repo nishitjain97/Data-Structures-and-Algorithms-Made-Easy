@@ -1,3 +1,12 @@
+/*
+Title: Towers of Hanoi
+
+Problem Type: Recursion
+
+Description: In this problem, we have 3 pegs (A, B, C) and a set of N rings on peg A increasing in size from top to bottom. We need to move these rings from peg A to peg C using peg B as an auxiliary peg, while constrained by the following rules:
+    - Move only 1 ring at a time
+    - No larger ring can be put on top a relatively smaller ring
+*/
 #include<iostream>
 using namespace std;
 
