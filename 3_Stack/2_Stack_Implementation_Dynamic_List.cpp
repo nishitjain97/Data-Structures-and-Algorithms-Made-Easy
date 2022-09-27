@@ -6,6 +6,7 @@ Problem Type: Stack
 Description: Implementing a FILO stack using a dynamic list internally.
 */
 #include<iostream>
+#include<climits>
 using namespace std;
 
 struct DynamicStack {
