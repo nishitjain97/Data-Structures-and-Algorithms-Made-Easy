@@ -10,62 +10,81 @@ Description: Minimum cost to multiply matrices.
 
 #include<vector>
 #include<iostream>
+#include<limits.h>
 using namespace std;
 
-int solMCMRecursive(vector<int>& arr, int start, int end) {
-	if(start >= end) {
-		return 0;
-	}
-	
-	int min_value = INT_MAX;
-	int temp;
-	
-	for(int k = start; k < end; k++) {
-		temp = arr[start-1] * arr[k] * arr[end] + solMCMRecursive(arr, start, k) + solMCMRecursive(arr, k+1, end);
-		
-		min_value = min(min_value, temp);
-	}
-	
-	return min_value;
-}
+int MCMDp(int* arr, int N) {
+	int table[N][N];
 
-int solMCMMemo(vector<int>& arr, int** table, int start, int end) {
-	if(start >= end) {
-		return 0;
+	for(int i = 1; i < N; i++) {
+		table[i][i] = 0;
 	}
-	
-	if(table[start][end] != -1) {
-		return table[start][end];
-	}
-	
-	int min_value = INT_MAX;
-	int temp;
-	
-	for(int k = start; k < end; k++) {
-		temp = arr[start-1] * arr[k] * arr[end] + solMCMMemo(arr, table, start, k) + solMCMMemo(arr, table, k+1, end);
-		
-		min_value = min(min_value, temp);
-	}
-	
-	table[start][end] = min_value;
-	
-	return min_value;
-}
 
-int matrixMultiplication(vector<int> &arr, int N)
-{
-// 	return solMCMRecursive(arr, 1, N-1);
-	
-	int **table = new int*[N];
-	for(int i = 0; i < N; i++) {
-		table[i] = new int[N];
-		
-		for(int j = 0; j < N; j++) {
-			table[i][j] = -1;
+	int j;
+	int cost;
+
+	for(int L = 2; L < N; L++) {
+		for(int i = 1; i < N - L + 1; i++) {
+			j = i + L - 1;
+			table[i][j] = INT_MAX;
+
+			for(int k = i; k < j; k++) {
+				cost = table[i][k] + table[k+1][j] + arr[i-1] * arr[k] * arr[j];
+
+				table[i][j] = min(cost, table[i][j]);
+			}
 		}
 	}
+	return table[1][N-1];
+}
+
+int MCMRecursive(int i, int j, int* arr) {
+	if(i == j) {
+		return 0;
+	}
+
+	int cost = INT_MAX;
+
+	for(int k = i; k < j; k++) {
+		cost = min(cost, MCMRecursive(i, k, arr) + MCMRecursive(k+1, j, arr) + arr[i-1] * arr[k] * arr[j]);
+	}
+	return cost;
+}
+
+int MCMMemo(int i, int j, int *arr, int **memo) {
+	if(i == j) {
+		memo[i][j] = 0;
+		return memo[i][j];
+	}
+
+	if(memo[i][j] != -1) {
+		return memo[i][j];
+	}
+
+	memo[i][j] = INT_MAX;
+
+	for(int k = i; k < j; k++) {
+		memo[i][j] = min(memo[i][j], MCMMemo(i, k, arr, memo) + MCMMemo(k+1, j, arr, memo) + arr[i-1] * arr[j] * arr[k]);
+	}
 	
-	return solMCMMemo(arr, table, 1, N-1);
+	return memo[i][j];
+}
+
+int matrixMultiplication(int* arr, int N) {
+	// return MCMRecursive(1, N-1, arr);
+	// return MCMDp(arr, N);
+
+	int **memo;
+	memo = new int*[N];
+
+	for(int i = 0; i < N; i++) {
+		memo[i] = new int[N];
+		for(int j = 0; j < N; j++) {
+			memo[i][j] = -1;
+		}
+	}
+
+	return MCMMemo(1, N-1, arr, memo);
 }
 
 int main() {
@@ -74,7 +93,7 @@ int main() {
     // vector<int> arr {10, 15, 20, 25}; // 8000
 
     int N = 4;
-    vector<int> arr {4, 5, 3, 2}; // 70
+	int arr[] = {1, 2, 3, 4};
 
     cout<<matrixMultiplication(arr, N)<<endl;
     return 0;
