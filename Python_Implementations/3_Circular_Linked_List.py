@@ -42,6 +42,36 @@ class CircularLL:
 
         return 
 
+    def delete_node(self, key:str) -> None:
+        if self.head_val is None:
+            return
+
+        itr_val = self.head_val
+        
+        if self.head_val.data_val == key:
+            while itr_val.next_val is not self.head_val:
+                itr_val = itr_val.next_val
+
+            itr_val.next_val = self.head_val.next_val
+            self.head_val = self.head_val.next_val
+            return
+
+        while itr_val.next_val is not self.head_val:
+            prev = itr_val
+            itr_val = itr_val.next_val
+
+            if itr_val.data_val == key:
+                break
+
+        if itr_val.next_val == self.head_val and itr_val.data_val != key:
+            return
+
+        prev.next_val = itr_val.next_val
+        itr_val = None
+        return
+
+        
+
     def print_list(self) -> None:
         itr_val = self.head_val
 
@@ -59,4 +89,10 @@ if __name__ == '__main__':
     cll.insert_end("the")
     cll.insert_start("Nishit")
     cll.insert_end("best")
+    cll.print_list()
+    cll.delete_node("best")
+    cll.print_list()
+    cll.delete_node("Nishit")
+    cll.print_list()
+    cll.delete_node("is")
     cll.print_list()
